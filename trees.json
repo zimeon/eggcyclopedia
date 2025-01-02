@@ -12,8 +12,10 @@
     "Morus alba": {},
     "Ostrya virginiana": {},
     "Pinus strobus": {},
+    "Quercus robur": {},
     "Quercus rubra": {},
     "Quercus kelloggii": {},
     "Salix nigra": {},
-    "Syringa vulgaris": {}
+    "Syringa vulgaris": {},
+    "Tilia ×europaea": {"skip": 1, "common_name": "Common lime"}
 }

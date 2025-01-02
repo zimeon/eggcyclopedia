@@ -94,6 +94,9 @@ def lookup_ott_ids(trees):
     for species in trees:
         if "ott_id" in trees[species]:
             continue
+        if "skip" in trees[species]:
+            # FIXME: How to handle crosses (e.g. Common lime)
+            continue
         # Look it up
         try:
             m = OT.tnrs_match([species])
