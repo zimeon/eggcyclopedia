@@ -5,7 +5,10 @@
     "Buxus sempervirens": {},
     "Celtis occidentalis": {},
     "Fagus grandifolia": {},
+    "Fraxinus pennsylvanica": {},
     "Juglans nigra": {},
+    "Juniperus virginiana": {},
+    "Lonicera maackii": {},
     "Malus domestica": {
       "common_name": "Apple"
     },
@@ -14,10 +17,12 @@
     "Pinus strobus": {},
     "Platanus occidentalis": {},
     "Populus tremuloides": {},
+    "Prunus serotina": {},
     "Quercus robur": {},
     "Quercus rubra": {},
     "Quercus kelloggii": {},
     "Salix nigra": {},
+    "Sequoia sempervirens": {},
     "Syringa vulgaris": {},
     "Tilia ×europaea": {"skip": 1, "common_name": "Common lime"}
 }
