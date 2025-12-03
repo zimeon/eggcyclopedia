@@ -11,8 +11,10 @@ Examples:
 https://github.com/snacktavish/OpenTree_SSB2020/blob/master/notebooks/DEMO_OpenTree.ipynb
 """
 import argparse
+from contextlib import redirect_stdout
 import csv
 import gzip
+import io
 import json
 import logging
 import re
@@ -39,15 +41,21 @@ def load_tree_list(filename='trees.json'):
 
     Returns dict that is indexed by species name.
     """
-    with open(filename, 'r') as fh:
+    with open(filename, 'r', encoding="utf-8") as fh:
         trees = json.load(fh)
     logging.info("Read %d trees from %s", len(trees), filename)
     return trees
 
 
-def write_tree_list(tree, filename='trees_processed.json'):
-    with open(filename, 'w') as fh:
-        trees = json.dump(tree, fh)
+def write_tree_list(trees, filename='trees_processed.json'):
+    """Write JSON file of all trees with data added.
+
+    Arguments:
+        trees (dict): tree data
+        filename (str): name of file to write
+    """
+    with open(filename, 'w', encoding="utf-8") as fh:
+        json.dump(trees, fh)
 
 
 def lookup_common_names(trees):
@@ -68,8 +76,6 @@ def lookup_common_names(trees):
                 if species not in common_names:
                     common_name = row[3].capitalize()
                     common_names[species] = common_name
-                    #print(', '.join(row))
-                    #print(species + " -- " + common_name)
     # Now lookup all trees
     for species in trees:
         if "common_name" in trees[species]:
@@ -89,8 +95,12 @@ def lookup_ott_ids(trees):
     """Lookup Open Tree of Life Taxonomy ids.
 
     Open Tree of Life Taxonomy (OTT from now on).
+
+    Arguments:
+        trees (dict): tree data
+
+    Adds data to the "ott_id" attribute for each species in the trees dict.
     """
-    ott_ids = []
     for species in trees:
         if "ott_id" in trees[species]:
             continue
@@ -108,14 +118,20 @@ def lookup_ott_ids(trees):
 
 
 def extract_ott_ids(trees):
-    """The list of defined OTT ids """
+    """Extract list of defined OTT ids.
+
+    Arguments:
+        trees (dict): tree data
+    """
     ott_ids = []
     for species in trees:
         if "ott_id" in trees[species]:
             ott_ids.append(trees[species]["ott_id"])
     return ott_ids
 
+
 def main():
+    """CLI handler."""
     args = parse_args()
 
     if args.lookup:
@@ -129,8 +145,21 @@ def main():
     if args.tree:
         ott_ids = extract_ott_ids(trees)
         # Get the synthetic tree from OpenTree
-        output = OT.synth_induced_tree(ott_ids=ott_ids, label_format='name')
-        output.tree.print_plot(width=100)
+        output = OT.synth_induced_tree(ott_ids=ott_ids, label_format='name_and_id')
+        # Get ASCII tree with labels "name (common name)"
+        # FIXME - How to get and ASCII tree without grabbing it from print_plot?
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            output.tree.print_plot(width=100)
+        t = buf.getvalue()
+        # Add common names by replacing ott ids
+        for species in trees:
+            if "ott_id" not in trees[species]:
+                continue
+            t = re.sub(" ott" + str(trees[species]["ott_id"]) + r"\b", " (" + trees[species]["common_name"] + ")", t)
+        print(t)
+        with open("trees_tree.txt", 'w', encoding="utf-8") as fh:
+            fh.write(t)
         # treefile = "outfile.tree"
         # output.tree.write(path = treefile, schema = "newick")
 
