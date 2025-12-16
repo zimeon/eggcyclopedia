@@ -13,19 +13,21 @@
                      |     |                        /--+-+++-++-++- Ostrya virginiana (Hophornbeam)     
                      |     |             /----------+                                               
                      |     |             |          \-++-+++-++-++- Juglans nigra (Black walnut)        
-                 /++-+     |             |                                                          
-                 |   |     \----------++-+      /+-++-++-+++-++-++- Quercus robur (English oak)         
+                     |     |             |                                                          
+                 /++-+     \----------++-+      /+-++-++-+++-++-++- Quercus robur (English oak)         
                  |   |                   |/-++-++                                                   
                  |   |                   ||     |         /+-++-++- Quercus rubra (Northern red oak)         
                  |   |                   \+     \---------+                                         
                  |   |                    |               \------+- Quercus kelloggii (California black oak)     
                  |   |                    |                                                         
                  |   |                    \---------------------++- Fagus grandifolia (American beech)     
-              /+-+   |                                                                              
-              |  |   |                   /---------++-++-+++-++-++- Ailanthus altissima (Tree of heaven)    
-              |  |   \----------+-++-+++-+                                                          
-              |  |                       |          /-++-+++-++-++- Acer saccharum (Sugar maple)        
-              |  |                       \+-++-+++-++                                               
+                 |   |                                                                              
+                 |   |                   /---------++-++-+++-++-++- Ailanthus altissima (Tree of heaven)    
+              /+-+   |                   |                                                          
+              |  |   \----------+-++-+++-+             /-+++-++-++- Acer saccharum (Sugar maple)        
+              |  |                       |          /-++                                            
+              |  |                       \+-++-+++-++  \-----++-++- Acer saccharinum (Silver maple)      
+              |  |                                  |                                               
               |  |                                  \-----------++- Acer negundo (Boxelder)          
            /+-+  |                                                                                  
            |  |  |                                    /------++-++- Syringa vulgaris (Common lilac)      

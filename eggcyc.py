@@ -154,7 +154,7 @@ def main():
         t = buf.getvalue()
         # Add common names by replacing ott ids
         for species in trees:
-            if "ott_id" not in trees[species]:
+            if "ott_id" not in trees[species] or "common_name" not in trees[species]:
                 continue
             t = re.sub(" ott" + str(trees[species]["ott_id"]) + r"\b", " (" + trees[species]["common_name"] + ")", t)
         print(t)
