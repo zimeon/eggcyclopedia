@@ -1,49 +1,53 @@
-                                                   /+-++-+++-++-++- Populus tremuloides (Quaking aspen)     
-                        /+-+++-++-++-+++-++-++-+++-+                                                
-                        |                          \-----+++-++-++- Salix nigra (Black willow)           
-                        |                                                                           
-                        |                       /+-++-++-+++-++-++- Morus alba (White mulberry)            
-                        |   /----------------+-++                                                   
-                     /+-+   |                   \---+-++-+++-++-++- Celtis occidentalis (Common hackberry)    
-                     |  |  /+                                                                       
-                     |  |  ||     /+-+++-++-++-+++-++-++-+++-++-++- Malus domestica (Apple)      
-                     |  |  |\+-++-+                                                                 
-                     |  |  |      \-------------------++-+++-++-++- Prunus serotina (Black cherry)       
-                     |  \+-+                                                                        
-                     |     |                        /--+-+++-++-++- Ostrya virginiana (Hophornbeam)     
-                     |     |             /----------+                                               
-                     |     |             |          \-++-+++-++-++- Juglans nigra (Black walnut)        
-                     |     |             |                                                          
-                 /++-+     \----------++-+      /+-++-++-+++-++-++- Quercus robur (English oak)         
-                 |   |                   |/-++-++                                                   
-                 |   |                   ||     |         /+-++-++- Quercus rubra (Northern red oak)         
-                 |   |                   \+     \---------+                                         
-                 |   |                    |               \------+- Quercus kelloggii (California black oak)     
-                 |   |                    |                                                         
-                 |   |                    \---------------------++- Fagus grandifolia (American beech)     
-                 |   |                                                                              
-                 |   |                   /---------++-++-+++-++-++- Ailanthus altissima (Tree of heaven)    
-              /+-+   |                   |                                                          
-              |  |   \----------+-++-+++-+             /-+++-++-++- Acer saccharum (Sugar maple)        
-              |  |                       |          /-++                                            
-              |  |                       \+-++-+++-++  \-----++-++- Acer saccharinum (Silver maple)      
-              |  |                                  |                                               
-              |  |                                  \-----------++- Acer negundo (Boxelder)          
-           /+-+  |                                                                                  
-           |  |  |                                    /------++-++- Syringa vulgaris (Common lilac)      
-           |  |  |              /-----++-++-++-+++-++-+                                             
-           |  |  \-------+-+++-++                     \+-+++-++-++- Fraxinus pennsylvanica (Green ash)
-/++-++-+++-+  |                 |                                                                   
-|          |  |                 \-++-+++-++-++-+++-++-++-+++-++-++- Lonicera maackii (Amur honeysuckle)      
-|          |  |                                                                                     
-|          |  \----------------------------------------+-+++-++-++- Buxus sempervirens (Common box)   
-+          |                                                                                        
-|          \-----------------------------------------------+-++-++- Platanus occidentalis (American sycamore)  
+                                           /-------------++++-++++- Ailanthus altissima (Tree of heaven)    
+                                           |                                                        
+                      /--------------++++-++             /+++-++++- Acer saccharum (Sugar maple)        
+                      |                    |          /+-+                                          
+                      |                    \++-++++-+++  \----++++- Acer saccharinum (Silver maple)      
+                   /-++                               |                                             
+                   |  |                               \--------+++- Acer negundo (Boxelder)          
+                   |  |                                                                             
+                   |  |                              /++-++++-++++- Populus tremuloides (Quaking aspen)     
+                   |  \++-++++-+++++-++++-++++-++++-++                                              
+                   |                                 \----+++-++++- Salix nigra (Black willow)           
+                   |                                                                                
+           /+++-++++                              /-++++-++++-++++- Morus alba (White mulberry)            
+           |       |                    /-------+++                                                 
+           |       |                    |         \--+++-++++-++++- Celtis occidentalis (Common hackberry)    
+           |       |                  /++                                                           
+           |       |                  | |      /+++-++++-++++-++++- Malus domestica (Apple)      
+           |       |                  | \-++++-+                                                    
+           |       |                  |        \-------+-++++-++++- Prunus serotina (Black cherry)       
+           |       \------------------+                                                             
+           |                          |               /+-++++-++++- Ostrya virginiana (Hophornbeam)     
+           |                          |     /---------+                                             
+           |                          |     |         \+-++++-++++- Juglans nigra (Black walnut)        
+           |                          |     |                                                       
+        /+-+                          \---+++     /-++++-++++-++++- Quercus robur (English oak)         
+        |  |                                |/-++++                                                 
+        |  |                                ||    |        /+-++++- Quercus rubra (Northern red oak)         
+        |  |                                \+    \--------+                                        
+        |  |                                 |             \-----+- Quercus kelloggii (California black oak)     
+        |  |                                 |                                                      
+        |  |                                 \------------------++- Fagus grandifolia (American beech)     
+        |  |                                                                                        
+       /+  |                                           /-------+++- Syringa vulgaris (Common lilac)      
+       ||  |                    /-------+-++++-++++-++++                                            
+       ||  |                   /+                      \-++++-++++- Fraxinus pennsylvanica (Green ash)
+       ||  |                   ||                                                                   
+       ||  \----------------++-+\+++-++++-++++-++++-++++-++++-++++- Lonicera maackii (Amur honeysuckle)      
+/++++-++|                      |                                                                    
+|      ||                      \------------++-++++-++++-++++-++++- Arbutus menziesii (Pacific madrone)     
+|      ||                                                                                           
+|      |\----------------------------------------------+-++++-++++- Buxus sempervirens (Common box)   
+|      |                                                                                            
++      \----------------------------------------------------+-++++- Platanus occidentalis (American sycamore)  
 |                                                                                                   
-|                                                /-++-++-+++-++-++- Juniperus virginiana (Eastern redcedar)   
-|                                     /+-++-++-+++                                                  
-\------------------------------------++          \------------+-++- Sequoia sempervirens (Redwood)  
-                                      |                                                             
-                                      \----------+-++-++-+++-++-++- Pinus strobus (Eastern white pine)         
+|                                                   /+++-++++-++++- Juniperus virginiana (Eastern redcedar)   
+|                                              /+++-+                                               
+|                                         /+++-+    \----------+++- Sequoia sempervirens (Redwood)  
+|                                         |    |                                                    
+\---------------------------------------+-+    \-------+-++++-++++- Taxus baccata (English yew)         
+                                          |                                                         
+                                          \---------++++-++++-++++- Pinus strobus (Eastern white pine)         
                                                                                                     
                                                                                                     

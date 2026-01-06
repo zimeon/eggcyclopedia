@@ -3,6 +3,7 @@
     "Acer saccharum": {},
     "Acer saccharinum": {},
     "Ailanthus altissima": {},
+    "Arbutus menziesii": {},
     "Buxus sempervirens": {},
     "Celtis occidentalis": {},
     "Fagus grandifolia": {},
@@ -25,5 +26,6 @@
     "Salix nigra": {},
     "Sequoia sempervirens": {},
     "Syringa vulgaris": {},
+    "Taxus baccata": {},
     "Tilia ×europaea": {"skip": 1, "common_name": "Common lime"}
 }
