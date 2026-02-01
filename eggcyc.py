@@ -29,7 +29,9 @@ def parse_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument("--lookup", "-l", action="store_true",
-                        help="run lookup on raw data (else use processed)")
+                        help="run lookup on anything not already in processed")
+    parser.add_argument("--lookup-all", "-L", action="store_true",
+                        help="run lookup on raw data (don't use processed at all)")
     parser.add_argument("--tree", "-t", action="store_true",
                         help="generate tree")
     args = parser.parse_args()
@@ -54,14 +56,21 @@ def write_tree_list(trees, filename='trees_processed.json'):
         trees (dict): tree data
         filename (str): name of file to write
     """
+    print(f"Writing {filename}")
     with open(filename, 'w', encoding="utf-8") as fh:
         json.dump(trees, fh)
 
 
-def lookup_common_names(trees):
+def lookup_common_names(trees, trees_processed):
     """Use USDA database to lookup the common names for all tress.
 
-    Will add common_name key to dict for each tree.
+    Arguments:
+        trees (dict): tree data with species name as key. This data is modified.
+        trees_processed (dict): tree data that has previosly been processed. Used
+            only to look up existing processed data.
+
+    Will add common_name key to dict for each tree. If tress_processed is
+    passed in then will data from there if present.
     """
     common_names = {}
     with gzip.open('usda_db_2024-12-02.csv.gz', 'rt') as fh:
@@ -78,6 +87,9 @@ def lookup_common_names(trees):
                     common_names[species] = common_name
     # Now lookup all trees
     for species in trees:
+        if species in trees_processed:
+            trees[species] = trees_processed[species]
+            continue
         if "common_name" in trees[species]:
             # Don't do a lookup of the config already has a
             # common name defined
@@ -99,7 +111,8 @@ def lookup_ott_ids(trees):
     Arguments:
         trees (dict): tree data
 
-    Adds data to the "ott_id" attribute for each species in the trees dict.
+    Adds data to the "ott_id" attribute for each species in the trees dict that
+    does not already have the attribute.
     """
     for species in trees:
         if "ott_id" in trees[species]:
@@ -134,11 +147,18 @@ def main():
     """CLI handler."""
     args = parse_args()
 
-    if args.lookup:
+    if args.lookup or args.lookup_all:
+        if args.lookup:
+            trees_processed = load_tree_list(filename="trees_processed.json")
+        else:
+            trees_processed = {}  # don't use existing data
         trees = load_tree_list()
-        lookup_common_names(trees)
+        lookup_common_names(trees, trees_processed)
         lookup_ott_ids(trees)
-        write_tree_list(trees)
+        if trees == trees_processed:
+            print("No new data, not updating trees_processed.json")
+        else:
+            write_tree_list(trees)
     else:
         trees = load_tree_list(filename="trees_processed.json")
 

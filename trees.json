@@ -4,6 +4,9 @@
     "Acer saccharinum": {},
     "Ailanthus altissima": {},
     "Arbutus menziesii": {},
+    "Betula pendula": {
+        "common_name": "Silver birch"
+    },
     "Buxus sempervirens": {},
     "Celtis occidentalis": {},
     "Fagus grandifolia": {},
@@ -12,7 +15,7 @@
     "Juniperus virginiana": {},
     "Lonicera maackii": {},
     "Malus domestica": {
-      "common_name": "Apple"
+        "common_name": "Apple"
     },
     "Morus alba": {},
     "Ostrya virginiana": {},
@@ -27,5 +30,9 @@
     "Sequoia sempervirens": {},
     "Syringa vulgaris": {},
     "Taxus baccata": {},
-    "Tilia ×europaea": {"skip": 1, "common_name": "Common lime"}
+    "Tilia ×europaea": {
+	"skip": 1,
+	"common_name": "Common lime"
+    },
+    "Umbellularia californica": {}
 }
