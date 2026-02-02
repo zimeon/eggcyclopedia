@@ -126,7 +126,7 @@ def lookup_ott_ids(trees):
             id = m.response_dict['results'][0]['matches'][0]['taxon']['ott_id']
             print("ott_id for %s is %d" % (species, id))
             trees[species]["ott_id"] = id
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logging.warning("Failed lookup for %s (%s)", species, str(e))
 
 

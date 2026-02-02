@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
-"""Build Eggcyclopedia of Wood website from a mix of verbatim and processed content.
+"""Build Eggcyclopedia of Wood website.
 
+Process a mix of verbatim and processed content.
 """
 import argparse
-import datetime
+import json
 import logging
 import os
 import re
 import shutil
+import sys
 
 import frontmatter  # python-frontmatter
-import json
-from liquid import Template, CachingFileSystemLoader, Environment, Mode
+from liquid import CachingFileSystemLoader, Environment, Mode
 import markdown
 from markdown.extensions.tables import TableExtension
 
 
-class FileProcessor(object):
+class FileProcessor():
     """Class to process a single file, whether it be render or copy.
 
     Keeps track of Liquid rendering environment (including cache) and
@@ -51,7 +52,7 @@ class FileProcessor(object):
         self.liquid_env = Environment(loader=loader, tolerance=Mode.STRICT, globals={'site': self.site_variables})
 
     def ignore_file(self, filename):
-        """True if file should be ignored.
+        """File should be ignored if True.
 
         Arguments:
             filename (str) - the file name of the file to check
@@ -59,7 +60,7 @@ class FileProcessor(object):
         if filename in self.files_to_ignore:
             logging.debug("ignore_file: Ignoring file %s by name", filename)
             return True
-        elif self.files_to_ignore_regex.search(filename):
+        if self.files_to_ignore_regex.search(filename):
             logging.debug("ignore_file: Ignoring file %s by pattern", filename)
             return True
         return False
@@ -75,16 +76,15 @@ class FileProcessor(object):
         """
         logging.debug("Scanning frontmatter for %s", filename)
         try:
-            with open(filename, 'r') as fh:
+            with open(filename, 'r', encoding='utf-8') as fh:
                 fm = frontmatter.load(fh)
                 logging.debug("yaml: %s", fm.metadata)
                 md['page'].update(fm.metadata)
                 md['content'] = fm.content
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logging.warning("Error - problem reading frontmatter from %s, will treat as if file had none (%s)", filename, e)
             return False
         return len(fm.metadata) > 0
-
 
     def process_file(self, filename, dst_root, dst_name, md=None):
         """Check one file and process, copy or ignore as necessary.
@@ -177,17 +177,23 @@ class FileProcessor(object):
                     }
                 }})
         template = self.liquid_env.get_template(md['page']['layout'])
-        with open(dst_filename, 'w') as fh:
+        with open(dst_filename, 'w', encoding='utf-8') as fh:
             fh.write(template.render(**md))
         self.processed += 1
 
     def stats(self):
-        """String of statistics about files copied, processed, etc.."""
+        """Statistics about files copied, processed, etc..
+
+        Returns:
+            str: description string
+        """
         return "%d copied, %d processed, %d unchanged" % (self.copied, self.processed, self.unchanged)
 
 
-class SiteProcessor(object):
+class SiteProcessor():
     """Class to handle processing of an entire site.
+
+    Keeps counts etc. as it goes through.
     """
 
     def __init__(self, src_dir, dst_dir, config):
@@ -223,7 +229,7 @@ class SiteProcessor(object):
                 if dir in self.dirs_to_ignore or self.dirs_to_ignore_regex.search(dir):
                     logging.debug("scan_dst: Ignoring dir %s", os.path.join(root, dir))
                     dirs.remove(dir)
-        logging.info("Scanned %d files in dst dir" % len(filenames))
+        logging.info("Scanned %d files in dst dir", len(filenames))
         self.old_dst_files = filenames
 
     def cleanup_dst(self):
@@ -235,11 +241,14 @@ class SiteProcessor(object):
         """
         for dst_filename in self.old_dst_files - self.fp.new_dst_files:
             logging.info("Would delete old file %s", dst_filename)
-            #os.remove(dst_filename)
-            #self.removed += 1
+            # os.remove(dst_filename)
+            # self.removed += 1
 
     def process_file(self, file):
         """Scan one source file in given directory under src_dir.
+
+        Arguments:
+            file (str) - file path under source directory
         """
         filename = os.path.join(self.src_dir, file)
         root, name = os.path.split(filename)
@@ -276,52 +285,57 @@ class SiteProcessor(object):
                 logging.info("Processing file %s %s %s", filename, dst_root, file)
                 self.fp.process_file(filename, dst_root, file)
 
-
     def build_site(self):
         """Build site."""
         self.scan_dst()
         self.process_source()
         self.cleanup_dst()
-        logging.warning("Done: " + self.fp.stats() + ", %d old files removed", self.removed)
+        logging.warning("Done: %s, %d old files removed", self.fp.stats(), self.removed)
 
 
-p = argparse.ArgumentParser()
-p.add_argument("-q", "--quiet", action="store_true",
-               help="Don't show normal warnings")
-p.add_argument("-v", "--verbose", action="store_true",
-               help="Show verbose details (use --debug for even more)")
-p.add_argument("--debug", action="store_true",
-               help="Show extremely verbose debugging information (implies --verbose too)")
-p.add_argument("--src", action="store", default="src",
-               help="Source directory, ")
-p.add_argument("--dst", action="store", default="docs",
-               help="Destination directory for web pages")
-p.add_argument("--file", action="store",
-               help="Process just specified file in source directory")
-p.add_argument("--config", action="store", default="build_website_config.json",
-               help="JSON configuration file.")
-args = p.parse_args()
+def command_line_script():
+    """Run from command line."""
+    p = argparse.ArgumentParser()
+    p.add_argument("-q", "--quiet", action="store_true",
+                   help="Don't show normal warnings")
+    p.add_argument("-v", "--verbose", action="store_true",
+                   help="Show verbose details (use --debug for even more)")
+    p.add_argument("--debug", action="store_true",
+                   help="Show extremely verbose debugging information (implies --verbose too)")
+    p.add_argument("--src", action="store", default="src",
+                   help="Source directory, ")
+    p.add_argument("--dst", action="store", default="docs",
+                   help="Destination directory for web pages")
+    p.add_argument("--file", action="store",
+                   help="Process just specified file in source directory")
+    p.add_argument("--config", action="store", default="build_website_config.json",
+                   help="JSON configuration file.")
+    args = p.parse_args()
 
-# Logging
-logging.basicConfig(level=(logging.ERROR if args.quiet else (
-    logging.DEBUG if args.debug else (
-        logging.INFO if args.verbose else logging.WARN))),
-    format='%(message)s')
+    # Logging
+    logging.basicConfig(level=(logging.ERROR if args.quiet else (
+        logging.DEBUG if args.debug else (
+            logging.INFO if args.verbose else logging.WARN))),
+        format='%(message)s')
 
-with open(args.config, 'r') as fh:
-    config = json.load(fh)
+    with open(args.config, 'r', encoding='utf-8') as fh:
+        config = json.load(fh)
 
-if not os.path.isdir(args.dst):
-    logging.error("Destination directory %s must already exist", args.dst)
-    sys.exit()
+    if not os.path.isdir(args.dst):
+        logging.error("Destination directory %s must already exist", args.dst)
+        sys.exit()
 
-processor = SiteProcessor(src_dir=args.src, dst_dir=args.dst, config=config)
-if args.file:
-    # Is the src_dir prepended? If so, stip it before passing in
-    file = args.file
-    if os.path.commonpath([args.src, file]) == args.src:
-        file = os.path.relpath(file, start=args.src)
-    logging.warning("Examining source file/dir %s", file)
-    processor.process_file(file=file)
-else:
-    processor.build_site()
+    processor = SiteProcessor(src_dir=args.src, dst_dir=args.dst, config=config)
+    if args.file:
+        # Is the src_dir prepended? If so, stip it before passing in
+        file = args.file
+        if os.path.commonpath([args.src, file]) == args.src:
+            file = os.path.relpath(file, start=args.src)
+        logging.warning("Examining source file/dir %s", file)
+        processor.process_file(file=file)
+    else:
+        processor.build_site()
+
+
+if __name__ == "__main__":
+    command_line_script()
