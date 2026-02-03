@@ -86,10 +86,10 @@ def main():
 
     if args.lookup or args.lookup_all:
         if args.lookup:
-            trees_processed = load_tree_list(filename="trees_processed.json")
+            trees_processed = load_tree_list()
         else:
             trees_processed = {}  # don't use existing data
-        trees = load_tree_list()
+        trees = load_tree_list(filename="trees.json")
         lookup_common_names(trees, trees_processed)
         lookup_ott_ids(trees)
         if trees == trees_processed:
@@ -97,7 +97,7 @@ def main():
         else:
             write_tree_list(trees)
     else:
-        trees = load_tree_list(filename="trees_processed.json")
+        trees = load_tree_list()
 
     if args.tree:
         ott_ids = extract_ott_ids(trees)

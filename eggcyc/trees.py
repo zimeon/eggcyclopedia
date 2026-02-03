@@ -7,8 +7,16 @@ import logging
 import re
 
 
-def load_tree_list(filename='trees.json'):
+def load_tree_list(filename='trees_processed.json'):
     """Load list of trees that we are generating pages for.
+
+    By default it loads the set of processed tree data but the
+    filename may be specified to load the manual data from
+    "trees.json".
+
+    Arguments:
+        filename (str) - filename of JSON file in local directory that
+            has tree data.
 
     Returns dict that is indexed by species name.
     """

@@ -16,6 +16,7 @@ from liquid import CachingFileSystemLoader, Environment, Mode
 import markdown
 from markdown.extensions.tables import TableExtension
 
+from eggcyc.trees import load_tree_list
 
 class FileProcessor():
     """Class to process a single file, whether it be render or copy.
@@ -181,6 +182,43 @@ class FileProcessor():
             fh.write(template.render(**md))
         self.processed += 1
 
+    def render_md_page(self, dst_root, dst_name, md, template="gallery"):
+        """Render content in md to HTML in dst_root.
+
+        Arguments:
+            dst_root - director that output file with go in
+            dst_name - file name of output, will be adjusted to have .html extension
+            md - metadata context for this page
+               md['page']['source_format'] either '.md' or '.html'
+            template - template to render with
+        """
+        dst_name = os.path.splitext(dst_name)[0] + '.html'  # Replace ext with .html
+        dst_filename = os.path.normpath(os.path.join(dst_root, dst_name))
+        dst_path = os.path.dirname(dst_filename)
+        # Keep a record that we want this file under dst_dir
+        self.new_dst_files.add(dst_filename)
+        if not os.path.exists(dst_path):
+            os.makedirs(dst_path)
+        logging.warning("Rendering %s", dst_filename)
+        if md['page']['source_format'] == '.md' and "content" in md:
+            md['content'] = markdown.markdown(
+                md['content'],
+                extensions=['toc', 'smarty', 'attr_list', TableExtension(), ],
+                extension_configs={'smarty': {
+                    'substitutions': {
+                        'left-single-quote': "‘",
+                        'right-single-quote': "’",
+                        'left-double-quote': "“",
+                        'right-double-quote': "”",
+                        'ellipsis': "…",
+                        'ndash': "–"
+                    }
+                }})
+        template = self.liquid_env.get_template(template)
+        with open(dst_filename, 'w', encoding='utf-8') as fh:
+            fh.write(template.render(**md))
+        self.processed += 1
+
     def stats(self):
         """Statistics about files copied, processed, etc..
 
@@ -285,10 +323,78 @@ class SiteProcessor():
                 logging.info("Processing file %s %s %s", filename, dst_root, file)
                 self.fp.process_file(filename, dst_root, file)
 
+    def species_page(self, trees, species):
+        """Species page URL path relative to web root."""
+        if "common_name" not in trees[species]:
+            logging.error("Missing common name for {species}")
+            sys.exit(1)
+        return os.path.join("sp", re.sub(" " , "_", trees[species]["common_name"].lower()) + ".html")
+
+    def species_egg_base(self, trees, species):
+        """Species egg base URL path relative to web root.
+
+        Does not include the suffix {#}{a|b|c}.jpg, e.g. "1a.jpg"
+        """
+        if "common_name" not in trees[species]:
+            logging.error("Missing common name for {species}")
+            sys.exit(1)
+        return os.path.join("photos", "egg_" + re.sub(" " , "_", trees[species]["common_name"].lower()) + "_")
+
+    def build_species_pages(self):
+        """Build pages for each species.
+
+        Create pages {dst}/sp/{common_name}.html for each species where
+        I have an egg. Include up to three photos of the egg.
+        """
+        trees = load_tree_list()
+        species_pages = {}   # species -> species_page
+        for species in trees:
+            page = self.species_page(trees, species)
+            output_file = os.path.join(self.dst_dir, page)
+            logging.debug(">>> creating %s and %s", page, output_file)
+            egg_base = self.species_egg_base(trees, species)
+            eggs = []
+            for ext in ("1a.jpg", "1b.jpg", "1c.jpg"):
+                egg_photo = egg_base + ext
+                if os.path.isfile(os.path.join(self.dst_dir, egg_photo)):
+                    eggs.append(egg_photo)
+            if len(eggs) == 0:
+                logging.debug(">>> No egg photos, skipping")
+                continue
+            logging.debug(">>> got %s eggs", eggs)
+            # Now build page
+            common_name = trees[species]["common_name"]
+            md = {"page": trees[species]}
+            md['page']['source_format'] = '.md'
+            md['page']['title'] = common_name
+            figures = ""
+            for egg in eggs:
+                figures += "\n<figure>\n"
+                figures += '  <img src="/%s" alt="%s egg photo"/>\n' % (egg, common_name)
+                figures += '  <figcaption>%s %s</figcaption>\n' % (common_name, egg)
+                figures += "</figure>\n"
+            md["figures"] = figures
+            self.fp.render_md_page(self.dst_dir, page, md)
+            species_pages[species] = page
+        #
+        # And now write the species.html page
+        md = {"page": {"source_format": ".md"}}
+        md['page']['title'] = "Species"
+        list = "<ul>\n"
+        for species in trees:
+            text = "%s (<i>%s<i>)" % (trees[species]["common_name"], species)
+            if species in species_pages:
+                text = '<a href="' + species_pages[species] + '">' + text + "</a>"
+            list += "  <li>" + text + "</li>\n"
+        list += "</ul>"
+        md["list"] = list
+        self.fp.render_md_page(self.dst_dir, "species.html", md, template="species")
+
     def build_site(self):
         """Build site."""
         self.scan_dst()
         self.process_source()
+        self.build_species_pages()
         self.cleanup_dst()
         logging.warning("Done: %s, %d old files removed", self.fp.stats(), self.removed)
 
