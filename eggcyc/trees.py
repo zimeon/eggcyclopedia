@@ -29,13 +29,16 @@ def load_tree_list(filename='trees_processed.json'):
 def write_tree_list(trees, filename='trees_processed.json'):
     """Write JSON file of all trees with data added.
 
+    Write in pretty-print format so that diffs show up nicely between
+    git copies of the file.
+
     Arguments:
         trees (dict): tree data
         filename (str): name of file to write
     """
     print(f"Writing {filename}")
     with open(filename, 'w', encoding="utf-8") as fh:
-        json.dump(trees, fh)
+        json.dump(trees, fh, indent=2, sort_keys=True)
 
 
 def lookup_common_names(trees, trees_processed):
