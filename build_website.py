@@ -367,6 +367,7 @@ class SiteProcessor():
             md = {"page": trees[species]}
             md['page']['source_format'] = '.md'
             md['page']['title'] = common_name
+            md['page']['path_to_root'] = "../"  # so that we can keep relative links
             figures = ""
             for egg in eggs:
                 figures += "\n<figure>\n"
