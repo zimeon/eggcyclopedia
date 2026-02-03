@@ -12,10 +12,7 @@ https://github.com/snacktavish/OpenTree_SSB2020/blob/master/notebooks/DEMO_OpenT
 """
 import argparse
 from contextlib import redirect_stdout
-import csv
-import gzip
 import io
-import json
 import logging
 import re
 

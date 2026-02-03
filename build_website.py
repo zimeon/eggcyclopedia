@@ -18,6 +18,7 @@ from markdown.extensions.tables import TableExtension
 
 from eggcyc.trees import load_tree_list
 
+
 class FileProcessor():
     """Class to process a single file, whether it be render or copy.
 
@@ -32,11 +33,11 @@ class FileProcessor():
         """
         self.src_dir = src_dir
         # Extract what we need from config
-        self.files_to_ignore = config['files_to_ignore']
-        self.files_to_ignore_regex = re.compile(config['files_to_ignore_regex'])
-        self.site_variables = config['site_variables']
-        self.templates_dir = os.path.join(src_dir, '_templates')
-        self.exts_to_scan = ['.md', '.html']
+        self.files_to_ignore = config["files_to_ignore"]
+        self.files_to_ignore_regex = re.compile(config["files_to_ignore_regex"])
+        self.site_variables = config["site_variables"]
+        self.templates_dir = os.path.join(src_dir, "_templates")
+        self.exts_to_scan = [".md", ".html"]
         self.copied = 0
         self.processed = 0
         self.unchanged = 0
@@ -49,8 +50,8 @@ class FileProcessor():
         Call this again if the site variables are updated.
         """
         # Set up liquid template engie
-        loader = CachingFileSystemLoader(self.templates_dir, ext='.html', cache_size=100)
-        self.liquid_env = Environment(loader=loader, tolerance=Mode.STRICT, globals={'site': self.site_variables})
+        loader = CachingFileSystemLoader(self.templates_dir, ext=".html", cache_size=100)
+        self.liquid_env = Environment(loader=loader, tolerance=Mode.STRICT, globals={"site": self.site_variables})
 
     def ignore_file(self, filename):
         """File should be ignored if True.
@@ -77,11 +78,11 @@ class FileProcessor():
         """
         logging.debug("Scanning frontmatter for %s", filename)
         try:
-            with open(filename, 'r', encoding='utf-8') as fh:
+            with open(filename, "r", encoding="utf-8") as fh:
                 fm = frontmatter.load(fh)
                 logging.debug("yaml: %s", fm.metadata)
-                md['page'].update(fm.metadata)
-                md['content'] = fm.content
+                md["page"].update(fm.metadata)
+                md["content"] = fm.content
         except Exception as e:  # pylint: disable=broad-exception-caught
             logging.warning("Error - problem reading frontmatter from %s, will treat as if file had none (%s)", filename, e)
             return False
@@ -109,10 +110,10 @@ class FileProcessor():
         if ext in self.exts_to_scan:
             if md is None:
                 md = {}
-            if 'page' not in md:
-                md['page'] = {}
-            md['page']['layout'] = 'page'
-            md['page']['source_format'] = ext
+            if "page" not in md:
+                md["page"] = {}
+            md["page"]["layout"] = "page"
+            md["page"]["source_format"] = ext
             if self.extract_frontmatter(filename, md):
                 # If there is frontmatter then render
                 self.render(filename, dst_root, dst_name, md)
@@ -145,9 +146,9 @@ class FileProcessor():
         * dst_root - director that output file with go in
         * dst_name - file name of output, will be adjusted to have .html extension
         * md - metadata context for this page
-            md['page']['source_format'] either '.md' or '.html'
+            md["page"]["source_format"] either ".md" or ".html"
         """
-        dst_name = os.path.splitext(dst_name)[0] + '.html'  # Replace ext with .html
+        dst_name = os.path.splitext(dst_name)[0] + ".html"  # Replace ext with .html
         dst_filename = os.path.normpath(os.path.join(dst_root, dst_name))
         # Keep a record that we want this file under dst_dir
         self.new_dst_files.add(dst_filename)
@@ -160,25 +161,25 @@ class FileProcessor():
         #    logging.info("Unchanged %s -> %s", src_filename, dst_filename)
         #    self.unchanged += 1
         #    return
-        if md['page']['source_format'] == '.md':
+        if md["page"]["source_format"] == ".md":
             # Might be nice to use newline-to-break 'nl2br' extension for new
             # material but I have a whole bunc of old stuff that expects
             # newlines not to be significant.
-            md['content'] = markdown.markdown(
-                md['content'],
-                extensions=['toc', 'smarty', 'attr_list', TableExtension(), ],
-                extension_configs={'smarty': {
-                    'substitutions': {
-                        'left-single-quote': "‘",
-                        'right-single-quote': "’",
-                        'left-double-quote': "“",
-                        'right-double-quote': "”",
-                        'ellipsis': "…",
-                        'ndash': "–"
+            md["content"] = markdown.markdown(
+                md["content"],
+                extensions=["toc", "smarty", "attr_list", TableExtension(), ],
+                extension_configs={"smarty": {
+                    "substitutions": {
+                        "left-single-quote": "‘",
+                        "right-single-quote": "’",
+                        "left-double-quote": "“",
+                        "right-double-quote": "”",
+                        "ellipsis": "…",
+                        "ndash": "–"
                     }
                 }})
-        template = self.liquid_env.get_template(md['page']['layout'])
-        with open(dst_filename, 'w', encoding='utf-8') as fh:
+        template = self.liquid_env.get_template(md["page"]["layout"])
+        with open(dst_filename, "w", encoding="utf-8") as fh:
             fh.write(template.render(**md))
         self.processed += 1
 
@@ -189,10 +190,10 @@ class FileProcessor():
             dst_root - director that output file with go in
             dst_name - file name of output, will be adjusted to have .html extension
             md - metadata context for this page
-               md['page']['source_format'] either '.md' or '.html'
+               md["page"]["source_format"] either ".md" or ".html"
             template - template to render with
         """
-        dst_name = os.path.splitext(dst_name)[0] + '.html'  # Replace ext with .html
+        dst_name = os.path.splitext(dst_name)[0] + ".html"  # Replace ext with .html
         dst_filename = os.path.normpath(os.path.join(dst_root, dst_name))
         dst_path = os.path.dirname(dst_filename)
         # Keep a record that we want this file under dst_dir
@@ -200,22 +201,22 @@ class FileProcessor():
         if not os.path.exists(dst_path):
             os.makedirs(dst_path)
         logging.warning("Rendering %s", dst_filename)
-        if md['page']['source_format'] == '.md' and "content" in md:
-            md['content'] = markdown.markdown(
-                md['content'],
-                extensions=['toc', 'smarty', 'attr_list', TableExtension(), ],
-                extension_configs={'smarty': {
-                    'substitutions': {
-                        'left-single-quote': "‘",
-                        'right-single-quote': "’",
-                        'left-double-quote': "“",
-                        'right-double-quote': "”",
-                        'ellipsis': "…",
-                        'ndash': "–"
+        if md["page"]["source_format"] == ".md" and "content" in md:
+            md["content"] = markdown.markdown(
+                md["content"],
+                extensions=["toc", "smarty", "attr_list", TableExtension(), ],
+                extension_configs={"smarty": {
+                    "substitutions": {
+                        "left-single-quote": "‘",
+                        "right-single-quote": "’",
+                        "left-double-quote": "“",
+                        "right-double-quote": "”",
+                        "ellipsis": "…",
+                        "ndash": "–"
                     }
                 }})
         template = self.liquid_env.get_template(template)
-        with open(dst_filename, 'w', encoding='utf-8') as fh:
+        with open(dst_filename, "w", encoding="utf-8") as fh:
             fh.write(template.render(**md))
         self.processed += 1
 
@@ -239,10 +240,10 @@ class SiteProcessor():
         self.src_dir = src_dir
         self.dst_dir = dst_dir
         self.config = config
-        self.dirs_to_ignore = config['dirs_to_ignore']
-        self.dirs_to_ignore_regex = re.compile(config['dirs_to_ignore_regex'])
-        self.root_dirs_to_ignore = config['root_dirs_to_ignore']
-        self.site_variables = config['site_variables']
+        self.dirs_to_ignore = config["dirs_to_ignore"]
+        self.dirs_to_ignore_regex = re.compile(config["dirs_to_ignore_regex"])
+        self.root_dirs_to_ignore = config["root_dirs_to_ignore"]
+        self.site_variables = config["site_variables"]
         self.fp = FileProcessor(src_dir=self.src_dir, config=config)
         self.old_dst_files = set()
         self.removed = 0
@@ -293,7 +294,7 @@ class SiteProcessor():
         dst_root = os.path.join(self.dst_dir, os.path.relpath(root, self.src_dir))
         self.fp.process_file(filename, dst_root, name)
 
-    def process_source(self, directory=''):
+    def process_source(self, directory=""):
         """Scan all files in given directory under the src_dir.
 
         If the `directory` parameter is left empty then the entire source
@@ -328,7 +329,7 @@ class SiteProcessor():
         if "common_name" not in trees[species]:
             logging.error("Missing common name for {species}")
             sys.exit(1)
-        return os.path.join("sp", re.sub(" " , "_", trees[species]["common_name"].lower()) + ".html")
+        return os.path.join("sp", re.sub(" ", "_", trees[species]["common_name"].lower()) + ".html")
 
     def species_egg_base(self, trees, species):
         """Species egg base URL path relative to web root.
@@ -338,7 +339,7 @@ class SiteProcessor():
         if "common_name" not in trees[species]:
             logging.error("Missing common name for {species}")
             sys.exit(1)
-        return os.path.join("photos", "egg_" + re.sub(" " , "_", trees[species]["common_name"].lower()) + "_")
+        return os.path.join("photos", "egg_" + re.sub(" ", "_", trees[species]["common_name"].lower()) + "_")
 
     def build_species_pages(self):
         """Build pages for each species.
@@ -346,6 +347,7 @@ class SiteProcessor():
         Create pages {dst}/sp/{common_name}.html for each species where
         I have an egg. Include up to three photos of the egg.
         """
+        logging.warning("\n\n############# build_species_apges...")
         trees = load_tree_list()
         species_pages = {}   # species -> species_page
         for species in trees:
@@ -365,13 +367,13 @@ class SiteProcessor():
             # Now build page
             common_name = trees[species]["common_name"]
             md = {"page": trees[species]}
-            md['page']['source_format'] = '.md'
-            md['page']['title'] = common_name
-            md['page']['path_to_root'] = "../"  # so that we can keep relative links
+            md["page"]["source_format"] = ".md"
+            md["page"]["title"] = common_name
+            md["page"]["path_to_root"] = "../"  # so that we can keep relative links
             figures = ""
             for egg in eggs:
                 figures += "\n<figure>\n"
-                figures += '  <img src="/%s" alt="%s egg photo"/>\n' % (egg, common_name)
+                figures += ' <img src="../%s" alt="%s egg photo"/>\n' % (egg, common_name)
                 figures += '  <figcaption>%s %s</figcaption>\n' % (common_name, egg)
                 figures += "</figure>\n"
             md["figures"] = figures
@@ -380,7 +382,7 @@ class SiteProcessor():
         #
         # And now write the species.html page
         md = {"page": {"source_format": ".md"}}
-        md['page']['title'] = "Species"
+        md["page"]["title"] = "Species"
         list = "<ul>\n"
         for species in trees:
             text = "%s (<i>%s<i>)" % (trees[species]["common_name"], species)
@@ -423,9 +425,9 @@ def command_line_script():
     logging.basicConfig(level=(logging.ERROR if args.quiet else (
         logging.DEBUG if args.debug else (
             logging.INFO if args.verbose else logging.WARN))),
-        format='%(message)s')
+        format="%(message)s")
 
-    with open(args.config, 'r', encoding='utf-8') as fh:
+    with open(args.config, "r", encoding="utf-8") as fh:
         config = json.load(fh)
 
     if not os.path.isdir(args.dst):
