@@ -134,6 +134,33 @@ section h2 {
     font-size: 0.95rem;
 }
 
+/* Photo Gallery */
+.photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.photo-gallery figure {
+    margin: 0;
+}
+
+.photo-gallery img {
+    width: 100%;
+    height: auto;
+    border: 1px solid #8B0000;
+    display: block;
+}
+
+.photo-gallery figcaption {
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    border: 1px solid #8B0000;
+    border-top: none;
+}
+
 /* Footer */
 footer {
     background-color: #8B0000;
