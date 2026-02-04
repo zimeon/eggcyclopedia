@@ -26,13 +26,43 @@ https://github.com/McTavishLab/jupyter_OpenTree_tutorials/blob/master/notebooks/
     "tar_file_download": "dates.opentreeoflife.org/v4/dates/download_dates_tar/chrono_out_02_03_2026_18_24_22.tar.gz"
 }
 
+Chronosynth: https://github.com/OpenTreeOfLife/chronosynth/wiki/Chronosynth-methods-overview
+
+Library for Newick format strings: https://gitlab.mpcdf.mpg.de/dlce-eva/python-newick
+
 """
 
 import io
 import logging
 import re
 
-from opentree import OT
+from opentree import OT, OpenTree, OTWebServiceWrapper
+from newick import loads
+
+import requests
 
 
-ott_ids = [791115, 403375]
+class DatedTree():
+
+    def __init__(self, api_endpoint="dates.opentreeoflife.org", api_version="v4"):
+        self._api_endpoint = api_endpoint
+        self._api_version = api_version
+        self._api_service = "dates"
+
+    def _make_url(self, method):
+        return("https://%s/%s/%s/%s" % (self._api_endpoint, self._api_version, self._api_service, method))
+
+    def dated_tree(self, ott_ids=None, max_age=500.0):
+        d = {"ott_ids": ott_ids, "max_age": str(max_age)}
+
+        r = requests.post(self._make_url(method="dated_tree"), data=d)
+        print(r.text)
+
+DatedTree().dated_tree(ott_ids=["ott791115", "ott403375"])
+
+#ott_ids = [791115, 403375]
+#
+#for node in tree[0].walk():
+#    age = node.length
+#    for desc in node.descendants:
+#        print(f"{node} {age} --> {desc}")
