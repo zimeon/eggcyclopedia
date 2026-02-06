@@ -18,7 +18,7 @@ import re
 
 from opentree import OT
 
-from eggcyc.trees import load_tree_list, write_tree_list, lookup_common_names
+from eggcyc.trees import Trees
 
 
 def parse_args():
@@ -37,67 +37,27 @@ def parse_args():
     return args
 
 
-def lookup_ott_ids(trees):
-    """Lookup Open Tree of Life Taxonomy ids.
-
-    Open Tree of Life Taxonomy (OTT from now on).
-
-    Arguments:
-        trees (dict): tree data
-
-    Adds data to the "ott_id" attribute for each species in the trees dict that
-    does not already have the attribute.
-    """
-    for species in trees:
-        if "ott_id" in trees[species]:
-            continue
-        if "skip" in trees[species]:
-            # FIXME: How to handle crosses (e.g. Common lime)
-            continue
-        # Look it up
-        try:
-            m = OT.tnrs_match([species])
-            id = m.response_dict['results'][0]['matches'][0]['taxon']['ott_id']
-            print("ott_id for %s is %d" % (species, id))
-            trees[species]["ott_id"] = id
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logging.warning("Failed lookup for %s (%s)", species, str(e))
-
-
-def extract_ott_ids(trees):
-    """Extract list of defined OTT ids.
-
-    Arguments:
-        trees (dict): tree data
-    """
-    ott_ids = []
-    for species in trees:
-        if "ott_id" in trees[species]:
-            ott_ids.append(trees[species]["ott_id"])
-    return ott_ids
-
-
 def main():
     """CLI handler."""
     args = parse_args()
 
     if args.lookup or args.lookup_all:
+        trees = Trees(filename="trees.json")
+        trees.expand_crosses()
         if args.lookup:
-            trees_processed = load_tree_list()
-        else:
-            trees_processed = {}  # don't use existing data
-        trees = load_tree_list(filename="trees.json")
-        lookup_common_names(trees, trees_processed)
-        lookup_ott_ids(trees)
-        if trees == trees_processed:
+            trees_processed = Trees(filename="trees_processed.json")
+            trees.merge_data_from(trees_processed)
+        trees.lookup_common_names()
+        trees.lookup_ott_ids()
+        if args.lookup and trees.trees == trees_processed.trees:
             print("No new data, not updating trees_processed.json")
         else:
-            write_tree_list(trees)
+            trees.write_tree_list()
     else:
-        trees = load_tree_list()
+        trees = Trees(filename="trees_processed.json")
 
     if args.tree:
-        ott_ids = extract_ott_ids(trees)
+        ott_ids = trees.extract_ott_ids()
         # Get the synthetic tree from OpenTree
         output = OT.synth_induced_tree(ott_ids=ott_ids, label_format='name_and_id')
         # Get ASCII tree with labels "name (common name)"
@@ -107,10 +67,10 @@ def main():
             output.tree.print_plot(width=100)
         t = buf.getvalue()
         # Add common names by replacing ott ids
-        for species in trees:
-            if "ott_id" not in trees[species] or "common_name" not in trees[species]:
+        for species in trees.trees:
+            if "ott_id" not in trees.trees[species] or "common_name" not in trees.trees[species]:
                 continue
-            t = re.sub(" ott" + str(trees[species]["ott_id"]) + r"\b", " (" + trees[species]["common_name"] + ")", t)
+            t = re.sub(" ott" + str(trees.trees[species]["ott_id"]) + r"\b", " (" + trees.trees[species]["common_name"] + ")", t)
         print(t)
         with open("trees_tree.txt", 'w', encoding="utf-8") as fh:
             fh.write(t)

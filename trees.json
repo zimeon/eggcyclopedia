@@ -31,8 +31,8 @@
     "Syringa vulgaris": {},
     "Taxus baccata": {},
     "Tilia ×europaea": {
-	"skip": 1,
-	"common_name": "Common lime"
+      	"common_name": "Common lime",
+      	"cross_between": ["Tilia cordata", "Tilia platyphyllos"]
     },
     "Umbellularia californica": {}
 }

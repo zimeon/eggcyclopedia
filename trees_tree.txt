@@ -1,10 +1,14 @@
                                           /------------++++-++++- Ailanthus altissima (Tree of heaven)      
                                           |                                                         
-                     /--------------+++++-+            /+++-++++- Acer saccharum (Sugar maple)          
-                     |                    |         /-++                                            
-                     |                    \++++-+++++  \----++++- Acer saccharinum (Silver maple)        
-                   /++                              |                                               
-                   | |                              \--------+++- Acer negundo (Boxelder)            
+                                     /-++-+            /+++-++++- Acer saccharum (Sugar maple)          
+                                     |    |         /-++                                            
+                                     |    \++++-+++++  \----++++- Acer saccharinum (Silver maple)        
+                     /------------+-++              |                                               
+                     |               |              \--------+++- Acer negundo (Boxelder)            
+                     |               |                                                              
+                     |               |                        /+- Tilia cordata (Littleleaf linden)           
+                   /++               \+++-+++++-+++++-+++++-+++                                     
+                   | |                                        \-- Tilia platyphyllos (Largeleaf linden)     
                    | |                                                                              
                    | |                             /+-+++++-++++- Populus tremuloides (Quaking aspen)       
                    | \+-+++++-+++++-+++++-+++++-++++                                                

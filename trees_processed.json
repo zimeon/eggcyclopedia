@@ -107,9 +107,20 @@
     "common_name": "English yew",
     "ott_id": 684215
   },
+  "Tilia cordata": {
+    "common_name": "Littleleaf linden",
+    "ott_id": 218598
+  },
+  "Tilia platyphyllos": {
+    "common_name": "Largeleaf linden",
+    "ott_id": 1067735
+  },
   "Tilia \u00d7europaea": {
     "common_name": "Common lime",
-    "skip": 1
+    "cross_between": [
+      "Tilia cordata",
+      "Tilia platyphyllos"
+    ]
   },
   "Umbellularia californica": {
     "common_name": "California laurel",
