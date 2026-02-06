@@ -8,6 +8,7 @@ import re
 import sys
 
 from opentree import OT
+from pygbif import species as gbif_species
 
 
 class Trees():
@@ -146,6 +147,21 @@ class Trees():
                 self.trees[species]["ott_id"] = id
             except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.warning("Failed lookup for %s (%s)", species, str(e))
+
+    def lookup_gbif_ids(self):
+        """Lookup GBIF ids for any entries that don't have them.
+
+        Uses the Opentree lookup from ott_id to GBIF id.
+        """
+        for species in self.trees:
+            gbif = gbif_species.name_backbone(scientificName=species, taxonRank="SPECIES", strict=True)
+            if "usage" not in gbif:
+                logging.warning("GBIF lookup for %s failed: %s", species, str(gbif))
+                continue
+            if gbif["diagnostics"]["matchType"] != "EXACT":
+                logging.warning("GBIF lookup for %s not EXACT: %s", species, str(gbif))
+            self.trees[species]["gbif_id"] = gbif["usage"]["key"]
+            self.trees[species]["gbif_classification"] = gbif["classification"]
 
     def extract_ott_ids(self):
         """Extract list of defined OTT ids.

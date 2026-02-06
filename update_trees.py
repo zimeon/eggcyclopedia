@@ -49,6 +49,7 @@ def main():
             trees.merge_data_from(trees_processed)
         trees.lookup_common_names()
         trees.lookup_ott_ids()
+        trees.lookup_gbif_ids()
         if args.lookup and trees.trees == trees_processed.trees:
             print("No new data, not updating trees_processed.json")
         else:
