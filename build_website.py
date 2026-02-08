@@ -16,7 +16,7 @@ from liquid import CachingFileSystemLoader, Environment, Mode
 import markdown
 from markdown.extensions.tables import TableExtension
 
-from eggcyc.trees import load_tree_list
+from eggcyc.trees import Trees
 
 
 class FileProcessor():
@@ -37,6 +37,7 @@ class FileProcessor():
         self.files_to_ignore_regex = re.compile(config["files_to_ignore_regex"])
         self.site_variables = config["site_variables"]
         self.templates_dir = os.path.join(src_dir, "_templates")
+        self.includes_dir = os.path.join(src_dir, "_includes")
         self.exts_to_scan = [".md", ".html"]
         self.copied = 0
         self.processed = 0
@@ -67,12 +68,16 @@ class FileProcessor():
             return True
         return False
 
-    def extract_frontmatter(self, filename, md):
-        """Extract frontmatter if present, warn if not.
+    def extract_frontmatter_and_content(self, filename, md):
+        """Extract frontmatter and content.
 
         Frontmatter is Jeklyll styles, see https://jekyllrb.com/docs/front-matter/.
         Adds extracted data to md dict with all page information added
         as page.*.
+
+        The main content (after the frontmatter) is returned in md["content"].
+        This content will be parsed to support {%include "file_to_include" %} where
+        _includes/file_to_include must exist with the source directory.
 
         Will return True if there is frontmatter (or it is empty), else False.
         """
@@ -82,25 +87,72 @@ class FileProcessor():
                 fm = frontmatter.load(fh)
                 logging.debug("yaml: %s", fm.metadata)
                 md["page"].update(fm.metadata)
-                md["content"] = fm.content
+                content = fm.content
         except Exception as e:  # pylint: disable=broad-exception-caught
             logging.warning("Error - problem reading frontmatter from %s, will treat as if file had none (%s)", filename, e)
             return False
+        # Look for includes in content
+        subs = {}
+        for match in re.finditer(r"""\{%\s*include\s+"(\S+)"\s*%\}""", content):
+            full_match = match.group(0)
+            filename = match.group(1)
+            print("Found %s %s" % (match.group(0), match.group(1)))
+            # Do a bit of a sanity check on filename
+            if ".." in filename or "/" in filename:
+                logging.error("Unsafe characters in include filenme %s" % (filename))
+                sys.exit(1)
+            filename = os.path.join(self.includes_dir, filename)
+            if not os.path.exists(filename):
+                logging.error("Cannot include %s - file doesn't exist" % (filename))
+                sys.exit(1)
+            if full_match not in subs:
+                with open(filename, "r", encoding="utf-8") as fh:
+                    subs[full_match] = fh.read()
+            # Now make the substitutions
+            #
+            # Warning - this has an error mode of making an additional sub into
+            # already substituted content. The number of occurrances is limited to
+            # the number of substitutions so it doesn't seem dangerous.
+            for full_match in subs:
+                content = content.replace(full_match, subs[full_match])
+        md["content"] = content
         return len(fm.metadata) > 0
+
+    def md_to_html(self, content):
+        """Render the input markdown to HTML.
+
+        Aguments:
+            content (str) - string of markdown input content.
+
+        Returns:
+            str - HTML content created from rendering markdown.
+        """
+        # Might be nice to use newline-to-break 'nl2br' extension for new
+        # material but I have a whole bunc of old stuff that expects
+        # newlines not to be significant.
+        html = markdown.markdown(
+            content,
+            extensions=["toc", "smarty", "attr_list", TableExtension(), ],
+            extension_configs={"smarty": {
+                "substitutions": {
+                    "left-single-quote": "‘",
+                    "right-single-quote": "’",
+                    "left-double-quote": "“",
+                    "right-double-quote": "”",
+                    "ellipsis": "…",
+                    "ndash": "–"
+                }
+            }})
+        return html
 
     def process_file(self, filename, dst_root, dst_name, md=None):
         """Check one file and process, copy or ignore as necessary.
 
-        Parameters
-        ----------
-        filename : str
-            Source file name
-        dst_root : str
-            Directory path for output file
-        dst_name : str
-            Output file name in `dst_root`
-        md : dict
-            Default metadata, will be added to and may be overridded.
+        Arguments:
+            filename (str) - Source file name
+            dst_root (str) - Directory path for output file
+            dst_name (str) - Output file name in `dst_root`
+            md (dict) - Default metadata, will be added to and may be overridded.
         """
         basename = os.path.basename(filename)
         if self.ignore_file(basename):
@@ -114,7 +166,7 @@ class FileProcessor():
                 md["page"] = {}
             md["page"]["layout"] = "page"
             md["page"]["source_format"] = ext
-            if self.extract_frontmatter(filename, md):
+            if self.extract_frontmatter_and_content(filename, md):
                 # If there is frontmatter then render
                 self.render(filename, dst_root, dst_name, md)
                 return
@@ -162,22 +214,7 @@ class FileProcessor():
         #    self.unchanged += 1
         #    return
         if md["page"]["source_format"] == ".md":
-            # Might be nice to use newline-to-break 'nl2br' extension for new
-            # material but I have a whole bunc of old stuff that expects
-            # newlines not to be significant.
-            md["content"] = markdown.markdown(
-                md["content"],
-                extensions=["toc", "smarty", "attr_list", TableExtension(), ],
-                extension_configs={"smarty": {
-                    "substitutions": {
-                        "left-single-quote": "‘",
-                        "right-single-quote": "’",
-                        "left-double-quote": "“",
-                        "right-double-quote": "”",
-                        "ellipsis": "…",
-                        "ndash": "–"
-                    }
-                }})
+            md["content"] = self.md_to_html(md["content"])
         template = self.liquid_env.get_template(md["page"]["layout"])
         with open(dst_filename, "w", encoding="utf-8") as fh:
             fh.write(template.render(**md))
@@ -202,19 +239,7 @@ class FileProcessor():
             os.makedirs(dst_path)
         logging.warning("Rendering %s", dst_filename)
         if md["page"]["source_format"] == ".md" and "content" in md:
-            md["content"] = markdown.markdown(
-                md["content"],
-                extensions=["toc", "smarty", "attr_list", TableExtension(), ],
-                extension_configs={"smarty": {
-                    "substitutions": {
-                        "left-single-quote": "‘",
-                        "right-single-quote": "’",
-                        "left-double-quote": "“",
-                        "right-double-quote": "”",
-                        "ellipsis": "…",
-                        "ndash": "–"
-                    }
-                }})
+            md["content"] = self.md_to_html(md["content"])
         template = self.liquid_env.get_template(template)
         with open(dst_filename, "w", encoding="utf-8") as fh:
             fh.write(template.render(**md))
@@ -348,7 +373,7 @@ class SiteProcessor():
         I have an egg. Include up to three photos of the egg.
         """
         logging.warning("\n\n############# build_species_apges...")
-        trees = load_tree_list()
+        trees = Trees().load_tree_list()
         species_pages = {}   # species -> species_page
         for species in trees:
             page = self.species_page(trees, species)

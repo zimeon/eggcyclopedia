@@ -156,7 +156,9 @@ def main():
                         count += name_counts[name]
             last_rank = next_rank
         # Write table
-        with open("trees_by_classification.html", "w", encoding="utf-8") as fh:
+        class_table_filename = "src/_includes/class_table.html"
+        logging.info("Writing %s..." % class_table_filename)
+        with open(class_table_filename, "w", encoding="utf-8") as fh:
             fh.write("""<table style="
             xborder-collapse: collapse;
             border: 2px solid black;">\n""")

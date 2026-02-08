@@ -31,11 +31,15 @@ class Trees():
             filename (str) - filename of JSON file in local directory that
                 has tree data.
 
-        Returns dict that is indexed by species name.
+        Returns:
+            dict - dictionary of tree that is indexed by species name. The is a
+                reference to self.trees and likely only used then the Trees
+                object is not persisted.
         """
         with open(filename, "r", encoding="utf-8") as fh:
             self.trees = json.load(fh)
         logging.info("Read %d trees from %s", len(self.trees), filename)
+        return self.trees
 
     def write_tree_list(self, filename="trees_processed.json"):
         """Write JSON file of all trees with data added.

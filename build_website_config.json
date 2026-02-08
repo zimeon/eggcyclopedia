@@ -2,7 +2,7 @@
     "_comment": "Settings for Eggcyclopedia of Wood",
     "dirs_to_ignore": [".git"],
     "dirs_to_ignore_regex": "(~)$",
-    "root_dirs_to_ignore": ["photos", "img", "css", "_templates"],
+    "root_dirs_to_ignore": ["photos", "img", "css", "_templates", "_includes"],
     "files_to_ignore": [".git", ".DS_Store", "favicon.ico"],
     "files_to_ignore_regex": "(~)$",
     "site_variables": {"name": "Eggcylopedia of Wood"}
