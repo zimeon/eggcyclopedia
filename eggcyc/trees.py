@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Eggcyclopedia of Wood Tree Data Handling Module."""
+"""Eggcyclopedia of Wood tree data handling class."""
 import csv
 import gzip
 import json
@@ -178,3 +178,18 @@ class Trees():
             if "ott_id" in self.trees[species]:
                 ott_ids.append(self.trees[species]["ott_id"])
         return ott_ids
+
+    def display_name(self, species):
+        """HTML display name for this species.
+
+        Arguments:
+            species (str) - the species name.
+
+        Returns:
+            str - HTML string with common name and display name, appropriatel
+                formatted to fit convention.
+        """
+        html = "<i>" + species + "</i>"
+        if species in self.trees and "common_name" in self.trees[species]:
+            html = self.trees[species]["common_name"] + " (" + html + ")"
+        return html
