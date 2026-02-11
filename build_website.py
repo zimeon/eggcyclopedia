@@ -99,11 +99,11 @@ class FileProcessor():
             print("Found %s %s" % (match.group(0), match.group(1)))
             # Do a bit of a sanity check on filename
             if ".." in filename or "/" in filename:
-                logging.error("Unsafe characters in include filenme %s" % (filename))
+                logging.error("Unsafe characters in include filenme %s", filename)
                 sys.exit(1)
             filename = os.path.join(self.includes_dir, filename)
             if not os.path.exists(filename):
-                logging.error("Cannot include %s - file doesn't exist" % (filename))
+                logging.error("Cannot include %s - file doesn't exist", filename)
                 sys.exit(1)
             if full_match not in subs:
                 with open(filename, "r", encoding="utf-8") as fh:
@@ -113,8 +113,8 @@ class FileProcessor():
             # Warning - this has an error mode of making an additional sub into
             # already substituted content. The number of occurrances is limited to
             # the number of substitutions so it doesn't seem dangerous.
-            for full_match in subs:
-                content = content.replace(full_match, subs[full_match])
+            for full_match, substitition in subs.items():
+                content = content.replace(full_match, substitition)
         md["content"] = content
         return len(fm.metadata) > 0
 
@@ -371,8 +371,12 @@ class SiteProcessor():
 
         Create pages {dst}/sp/{common_name}.html for each species where
         I have an egg. Include up to three photos of the egg.
+
+        Returns:
+            dict - indexed by species name with values that are the URL for the
+                corresponding egg page for that species
         """
-        logging.warning("\n\n############# build_species_apges...")
+        logging.warning("\n\n############# build_species_pages...")
         trees = Trees().load_tree_list()
         species_pages = {}   # species -> species_page
         for species in trees:
@@ -417,12 +421,13 @@ class SiteProcessor():
         list += "</ul>"
         md["list"] = list
         self.fp.render_md_page(self.dst_dir, "species.html", md, template="species")
+        return species_pages
 
     def build_site(self):
         """Build site."""
         self.scan_dst()
-        self.process_source()
         self.build_species_pages()
+        self.process_source()
         self.cleanup_dst()
         logging.warning("Done: %s, %d old files removed", self.fp.stats(), self.removed)
 

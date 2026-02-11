@@ -1,0 +1,238 @@
+{
+  "Acer": {
+    "common_name": "maple",
+    "gbif_id": 3189834
+  },
+  "Ailanthus": {
+    "common_name": "tree-of-heaven",
+    "gbif_id": 3190652
+  },
+  "Arbutus": {
+    "common_name": "madrone",
+    "gbif_id": 2882796
+  },
+  "Betula": {
+    "common_name": "birch",
+    "gbif_id": 2875008
+  },
+  "Betulaceae": {
+    "common_name": "birch",
+    "gbif_id": 4688
+  },
+  "Buxaceae": {
+    "common_name": "box family",
+    "gbif_id": 6703
+  },
+  "Buxus": {
+    "common_name": "Boxwood",
+    "gbif_id": 2984666
+  },
+  "Cannabaceae": {
+    "common_name": "Hemp",
+    "gbif_id": 2384
+  },
+  "Caprifoliaceae": {
+    "common_name": "Honeysuckle",
+    "gbif_id": 6710
+  },
+  "Celtis": {
+    "common_name": "hackberry",
+    "gbif_id": 2984479
+  },
+  "Cupressaceae": {
+    "common_name": "Cypress",
+    "gbif_id": 8144
+  },
+  "Dipsacales": {
+    "common_name": "Honeysuckles, Moschatels, And Allies",
+    "gbif_id": 946
+  },
+  "Ericaceae": {
+    "common_name": "Heather Family",
+    "gbif_id": 2505
+  },
+  "Ericales": {
+    "common_name": "Heathers, Balsams, Primroses, And Allies",
+    "gbif_id": 1353
+  },
+  "Fagaceae": {
+    "common_name": "Beech Family",
+    "gbif_id": 4689
+  },
+  "Fagales": {
+    "common_name": "Beeches, Oaks, Walnuts, And Allies",
+    "gbif_id": 1354
+  },
+  "Fagus": {
+    "common_name": "beech",
+    "gbif_id": 2874875
+  },
+  "Fraxinus": {
+    "common_name": "ash",
+    "gbif_id": 3172323
+  },
+  "Juglandaceae": {
+    "common_name": "Walnut Family",
+    "gbif_id": 2499
+  },
+  "Juglans": {
+    "common_name": "walnut",
+    "gbif_id": 3054350
+  },
+  "Juniperus": {
+    "common_name": "juniper",
+    "gbif_id": 2684359
+  },
+  "Lamiales": {
+    "common_name": "Mints, Plantains, Olives, And Allies",
+    "gbif_id": 408
+  },
+  "Lauraceae": {
+    "common_name": "laurel",
+    "gbif_id": 6688
+  },
+  "Laurales": {
+    "common_name": "Laurels, Spicebushes, And Allies",
+    "gbif_id": 407
+  },
+  "Lonicera": {
+    "common_name": "honeysuckle",
+    "gbif_id": 2888645
+  },
+  "Magnoliopsida": {
+    "common_name": "Dicots",
+    "gbif_id": 220
+  },
+  "Malpighiales": {
+    "common_name": "Nances, Willows, And Allies",
+    "gbif_id": 1414
+  },
+  "Malus": {
+    "common_name": "Apple",
+    "gbif_id": 3001068
+  },
+  "Malvaceae": {
+    "common_name": "Mallow Family",
+    "gbif_id": 6685
+  },
+  "Malvales": {
+    "common_name": "Mallows, Rock-roses, And Allies",
+    "gbif_id": 941
+  },
+  "Moraceae": {
+    "common_name": "Mulberries",
+    "gbif_id": 6640
+  },
+  "Morus": {
+    "common_name": "mulberry",
+    "gbif_id": 2984545
+  },
+  "Oleaceae": {
+    "common_name": "Ash Family",
+    "gbif_id": 6652
+  },
+  "Ostrya": {
+    "common_name": "hophornbeam",
+    "gbif_id": 8091875
+  },
+  "Pinaceae": {
+    "common_name": "Pine Family",
+    "gbif_id": 3925
+  },
+  "Pinales": {
+    "common_name": "Pines",
+    "gbif_id": 640
+  },
+  "Pinopsida": {
+    "common_name": "Conifers",
+    "gbif_id": 194
+  },
+  "Pinus": {
+    "common_name": "pine",
+    "gbif_id": 2684241
+  },
+  "Plantae": {
+    "common_name": "Plants",
+    "gbif_id": 6
+  },
+  "Platanaceae": {
+    "common_name": "Plane Family",
+    "gbif_id": 6693
+  },
+  "Platanus": {
+    "common_name": "plane tree",
+    "gbif_id": 3152811
+  },
+  "Populus": {
+    "common_name": "poplar",
+    "gbif_id": 3040183
+  },
+  "Proteales": {
+    "common_name": "Proteas, Lotuses, Planes, And Allies",
+    "gbif_id": 400
+  },
+  "Prunus": {
+    "common_name": "plum",
+    "gbif_id": 3020559
+  },
+  "Quercus": {
+    "common_name": "oak",
+    "gbif_id": 2877951
+  },
+  "Rosaceae": {
+    "common_name": "Rose Family",
+    "gbif_id": 5015
+  },
+  "Rosales": {
+    "common_name": "Roses, Elms, Figs, And Allies",
+    "gbif_id": 691
+  },
+  "Salicaceae": {
+    "common_name": "Willow Family",
+    "gbif_id": 6664
+  },
+  "Salix": {
+    "common_name": "willow",
+    "gbif_id": 3039576
+  },
+  "Sapindaceae": {
+    "common_name": "Pride-of-india Family",
+    "gbif_id": 6657
+  },
+  "Sapindales": {
+    "common_name": "Soapberries, Cashews, Mahoganies, And Allies",
+    "gbif_id": 933
+  },
+  "Sequoia": {
+    "common_name": "coast redwood",
+    "gbif_id": 2683908
+  },
+  "Simaroubaceae": {
+    "common_name": "Quassias",
+    "gbif_id": 2395
+  },
+  "Syringa": {
+    "common_name": "Lilac",
+    "gbif_id": 3172235
+  },
+  "Taxaceae": {
+    "common_name": "Yew Family",
+    "gbif_id": 4863
+  },
+  "Taxus": {
+    "common_name": "Yew",
+    "gbif_id": 2684902
+  },
+  "Tilia": {
+    "common_name": "linden",
+    "gbif_id": 3152041
+  },
+  "Tracheophyta": {
+    "common_name": "Tracheophytes",
+    "gbif_id": 7707728
+  },
+  "Umbellularia": {
+    "common_name": "California Laurel",
+    "gbif_id": 3033996
+  }
+}

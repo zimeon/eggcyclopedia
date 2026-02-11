@@ -8,7 +8,7 @@ import re
 import sys
 
 from opentree import OT
-from pygbif import species as gbif_species
+import pygbif
 
 
 class Trees():
@@ -48,10 +48,9 @@ class Trees():
         git copies of the file.
 
         Arguments:
-            trees (dict): tree data
             filename (str): name of file to write
         """
-        print(f"Writing {filename}")
+        print(f"Writing tree data to {filename}")
         with open(filename, "w", encoding="utf-8") as fh:
             json.dump(self.trees, fh, indent=2, sort_keys=True)
 
@@ -158,13 +157,13 @@ class Trees():
         Uses the Opentree lookup from ott_id to GBIF id.
         """
         for species in self.trees:
-            gbif = gbif_species.name_backbone(scientificName=species, taxonRank="SPECIES", strict=True)
+            gbif = pygbif.species.name_backbone(scientificName=species, taxonRank="SPECIES", strict=True)
             if "usage" not in gbif:
                 logging.warning("GBIF lookup for %s failed: %s", species, str(gbif))
                 continue
             if gbif["diagnostics"]["matchType"] != "EXACT":
                 logging.warning("GBIF lookup for %s not EXACT: %s", species, str(gbif))
-            self.trees[species]["gbif_id"] = gbif["usage"]["key"]
+            self.trees[species]["gbif_id"] = int(gbif["usage"]["key"])
             self.trees[species]["gbif_classification"] = gbif["classification"]
 
     def extract_ott_ids(self):

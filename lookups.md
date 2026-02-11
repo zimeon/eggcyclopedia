@@ -1,5 +1,21 @@
 # Tree and Wood identifier lookups
 
+## Lookup by GBIF id
+
+For "Sugar Maple", GBIF id 3189859 (which must be quoted) we can search with:
+
+```
+SELECT ?item ?itemLabel ?woody_plants_db_id
+WHERE
+{
+  ?item wdt:P846 "3189859" .
+  OPTIONAL { ?item wdt:P10793 ?woody_plants_db_id }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+```
+
+Note that to get other ids, such as the [Cornell Woody Plants DB id (P10793)](https://www.wikidata.org/wiki/Property:P10793) can then be tacked on in `OPTIONAL` queries so that they don't break the search if missing.
+
 ## Linking Trees to Wood
 
 Wikidata as a [natural product of taxon (P1582)](https://www.wikidata.org/wiki/Property:P1582) which can be tied to the natural product being wood as identified by [instance of (P31)](https://www.wikidata.org/wiki/Property:P31) [type of wood (Q1493054)](https://www.wikidata.org/wiki/Q1493054].

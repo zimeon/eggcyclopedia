@@ -53,7 +53,7 @@ def main():
         trees.lookup_ott_ids()
         trees.lookup_gbif_ids()
         if args.lookup and trees.trees == trees_processed.trees:
-            print("No new data, not updating trees_processed.json")
+            logging.info("No new data, not updating trees_processed.json")
         else:
             trees.write_tree_list()
     else:
@@ -74,7 +74,7 @@ def main():
             if "ott_id" not in trees.trees[species] or "common_name" not in trees.trees[species]:
                 continue
             t = re.sub(" ott" + str(trees.trees[species]["ott_id"]) + r"\b", " (" + trees.trees[species]["common_name"] + ")", t)
-        print(t)
+        logging.warning(t)
         with open("trees_tree.txt", 'w', encoding="utf-8") as fh:
             fh.write(t)
         # treefile = "outfile.tree"
